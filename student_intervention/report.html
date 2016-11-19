@@ -11855,20 +11855,15 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># TODO: Calculate number of students</span>
-<span class="n">n_students</span> <span class="o">=</span> <span class="n">student_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_students</span> <span class="o">=</span> <span class="n">student_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="c1"># TODO: Calculate number of features</span>
-<span class="n">n_features</span> <span class="o">=</span> <span class="n">student_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">n_features</span> <span class="o">=</span> <span class="n">student_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># minus &#39;passed&#39;</span>
 
-<span class="c1"># TODO: Calculate passing students</span>
 <span class="n">n_passed</span> <span class="o">=</span> <span class="n">student_data</span><span class="p">[</span><span class="n">student_data</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="c1"># TODO: Calculate failing students</span>
 <span class="n">n_failed</span> <span class="o">=</span> <span class="n">student_data</span><span class="p">[</span><span class="n">student_data</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;no&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="c1"># TODO: Calculate graduation rate</span>
-<span class="n">grad_rate</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_passed</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_passed</span> <span class="o">+</span> <span class="n">n_failed</span><span class="p">)</span> 
+<span class="n">grad_rate</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_passed</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_passed</span> <span class="o">+</span> <span class="n">n_failed</span><span class="p">)</span> 
 
 <span class="c1"># Print the results</span>
 <span class="k">print</span> <span class="s2">&quot;Total number of students: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_students</span><span class="p">)</span>
@@ -11889,10 +11884,10 @@ div#notebook {
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Total number of students: 395
-Number of features: 31
+Number of features: 30
 Number of students who passed: 265
 Number of students who failed: 130
-Graduation rate of the class: 67.00%
+Graduation rate of the class: 67.09%
 </pre>
 </div>
 </div>
@@ -12081,7 +12076,7 @@ Feature values:
 <span class="c1"># Set the number of testing points</span>
 <span class="n">num_test</span> <span class="o">=</span> <span class="n">X_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">num_train</span>
 
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_all</span><span class="p">,</span> <span class="n">y_all</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">num_test</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_all</span><span class="p">,</span> <span class="n">y_all</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">y_all</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">num_test</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 
 <span class="c1"># Show the results of the split</span>
 <span class="k">print</span> <span class="s2">&quot;Training set has {} samples.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -12228,6 +12223,8 @@ coronary heart disease
 Social science: to predict winner in elections.
 Marketing: predict probability, that user will buy something 
 Also in economics, business and engineering.</p>
+<p>Small hints could be found here:
+<a href="http://scikit-learn.org/stable/tutorial/machine_learning_map/">http://scikit-learn.org/stable/tutorial/machine_learning_map/</a></p>
 <p><strong> Choice </strong></p>
 <p>I think, that following features should be true for students intervention classificator:
 It should not be sensitive to outliners (some child could be genious) 
@@ -12342,7 +12339,7 @@ And it would be great if result could be presented be some decision tree or sche
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
 
 <span class="n">clf_A</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
-<span class="n">clf_B</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
+<span class="n">clf_B</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 <span class="n">clf_C</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">()</span>
 <span class="n">clfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">clf_A</span><span class="p">,</span> <span class="n">clf_B</span><span class="p">,</span> <span class="n">clf_C</span><span class="p">]</span>
 
@@ -12371,58 +12368,58 @@ And it would be great if result could be presented be some decision tree or sche
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Training a GaussianNB using a training set size of 100. . .
-Trained model in 0.0029 seconds
-Made predictions in 0.0006 seconds.
+Trained model in 0.0025 seconds
+Made predictions in 0.0013 seconds.
 F1 score for training set: 0.4536.
-Made predictions in 0.0006 seconds.
+Made predictions in 0.0012 seconds.
 F1 score for test set: 0.2692.
 Training a GaussianNB using a training set size of 200. . .
-Trained model in 0.0009 seconds
-Made predictions in 0.0004 seconds.
+Trained model in 0.0020 seconds
+Made predictions in 0.0008 seconds.
 F1 score for training set: 0.8071.
-Made predictions in 0.0005 seconds.
+Made predictions in 0.0007 seconds.
 F1 score for test set: 0.6667.
 Training a GaussianNB using a training set size of 300. . .
-Trained model in 0.0015 seconds
-Made predictions in 0.0005 seconds.
+Trained model in 0.0014 seconds
+Made predictions in 0.0010 seconds.
 F1 score for training set: 0.8246.
-Made predictions in 0.0003 seconds.
+Made predictions in 0.0005 seconds.
 F1 score for test set: 0.6435.
 Training a RandomForestClassifier using a training set size of 100. . .
-Trained model in 0.0296 seconds
-Made predictions in 0.0015 seconds.
-F1 score for training set: 0.9867.
-Made predictions in 0.0016 seconds.
-F1 score for test set: 0.7106.
+Trained model in 0.0443 seconds
+Made predictions in 0.0013 seconds.
+F1 score for training set: 0.9933.
+Made predictions in 0.0014 seconds.
+F1 score for test set: 0.6849.
 Training a RandomForestClassifier using a training set size of 200. . .
-Trained model in 0.0287 seconds
-Made predictions in 0.0012 seconds.
-F1 score for training set: 0.9927.
-Made predictions in 0.0011 seconds.
-F1 score for test set: 0.7104.
-Training a RandomForestClassifier using a training set size of 300. . .
-Trained model in 0.0633 seconds
-Made predictions in 0.0015 seconds.
-F1 score for training set: 0.9975.
-Made predictions in 0.0010 seconds.
-F1 score for test set: 0.6885.
-Training a SVC using a training set size of 100. . .
-Trained model in 0.0012 seconds
-Made predictions in 0.0011 seconds.
-F1 score for training set: 0.8772.
+Trained model in 0.0425 seconds
 Made predictions in 0.0016 seconds.
+F1 score for training set: 0.9892.
+Made predictions in 0.0013 seconds.
+F1 score for test set: 0.7159.
+Training a RandomForestClassifier using a training set size of 300. . .
+Trained model in 0.0806 seconds
+Made predictions in 0.0016 seconds.
+F1 score for training set: 0.9925.
+Made predictions in 0.0013 seconds.
+F1 score for test set: 0.6271.
+Training a SVC using a training set size of 100. . .
+Trained model in 0.0027 seconds
+Made predictions in 0.0010 seconds.
+F1 score for training set: 0.8772.
+Made predictions in 0.0020 seconds.
 F1 score for test set: 0.7792.
 Training a SVC using a training set size of 200. . .
-Trained model in 0.0032 seconds
+Trained model in 0.0035 seconds
 Made predictions in 0.0024 seconds.
 F1 score for training set: 0.8474.
-Made predictions in 0.0022 seconds.
+Made predictions in 0.0026 seconds.
 F1 score for test set: 0.7987.
 Training a SVC using a training set size of 300. . .
-Trained model in 0.0066 seconds
-Made predictions in 0.0045 seconds.
+Trained model in 0.0082 seconds
+Made predictions in 0.0062 seconds.
 F1 score for training set: 0.8686.
-Made predictions in 0.0015 seconds.
+Made predictions in 0.0026 seconds.
 F1 score for test set: 0.7571.
 </pre>
 </div>
@@ -12494,24 +12491,24 @@ F1 score for test set: 0.7571.
 <tbody>
 <tr>
 <td style="text-align:center">100</td>
-<td style="text-align:center">0.0381</td>
-<td style="text-align:center">0.0014</td>
+<td style="text-align:center">0.0292</td>
+<td style="text-align:center">0.0013</td>
 <td style="text-align:center">0.9933</td>
-<td style="text-align:center">0.7105</td>
+<td style="text-align:center">0.6849</td>
 </tr>
 <tr>
 <td style="text-align:center">200</td>
-<td style="text-align:center">0.0328</td>
-<td style="text-align:center">0.0013</td>
-<td style="text-align:center">0.9853</td>
-<td style="text-align:center">0.6531</td>
+<td style="text-align:center">0.0320</td>
+<td style="text-align:center">0.0016</td>
+<td style="text-align:center">0.9892</td>
+<td style="text-align:center">0.7159</td>
 </tr>
 <tr>
 <td style="text-align:center">300</td>
-<td style="text-align:center">0.0311</td>
-<td style="text-align:center">0.0012</td>
-<td style="text-align:center">0.9876</td>
-<td style="text-align:center">0.5472</td>
+<td style="text-align:center">0.0336</td>
+<td style="text-align:center">0.0011</td>
+<td style="text-align:center">0.9925</td>
+<td style="text-align:center">0.6271</td>
 </tr>
 </tbody>
 </table>
@@ -12579,6 +12576,7 @@ F1 score for test set: 0.7571.
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> The best result (fast training time and high F1 score) shows SVM Classificator. So, it should be the best model.</p>
+<p>P.S I choose this model, because this data set is small. Is known, that SVM doesn't perform well in large datasets. So, this model is not very scalable. If dataset become much bigger, I would prefere Stochastic Gradient Descent because classifiers in this module easily scale to problems with more than 10^5 training examples and more than 10^5 features.</p>
 
 </div>
 </div>
@@ -12598,7 +12596,16 @@ F1 score for test set: 0.7571.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong> There are very successfull students, who obviosly will pass all of the exams. There are such a bad students, that definitely fail all of the exams. You don't need a fancy algorithm to define that. The most interesting case is where it is unknown if the student pass or fail. The main purpose of this model is to find the most accurate boundary that separate cases where students most probably fail, from cases where students most probably pass. So, when algorithm is working he tries to mark this edge cases as more important, then obvious cases. After that, algorithm try to define such a border between "pass" and "fail" students. Imagine one student, that should fail, but passed and student, that almost passed, but failed. Algorithm analyze difference between them, and try to find such an conditions, where its imposible to say, if the student fail or pass. Then, algorithm use this conditions to define if any other student pass or fail.</p>
+<p><strong>Answer: </strong></p>
+<p>I choose Support Vector Machine model. It works quite simple. 
+Imagine, that blue points is students who pass, and red who fail. Algorithm try to find margin that separates them. To minimaze error for future predictions, it should be a margin with longest distance from the nearest points of each group.</p>
+<p><img src="svm_1.png"></p>
+<p>On picture solid line shows margin, that model try to find. Dashed lines is used to highlight nearest points to margin. Points on dash lines are the support vectors. Given this margin, when we see any point (student-info) that we haven't seen before, algorithm can find out if the point should be blue (student pass), or red (student fail).</p>
+<p>But what if there is no such a single line exists that seperates two groups from each other? This algorithm can work with more complex margin shapes than just simple line.</p>
+<p><img src="trick.png"></p>
+<p>Let's imagine, that studens who passed (blue one) group together in circle shape and all who failed (red one) are around. You can see this on right picture. To find such a shape, there is one trick. We should add a dimention using data we already have! Let's create new Z parameter, where z = x^2+y^2 (using equation of circle's radius). The result you can see on left image. Z label is new parameter. Red examples now is on top, and blue is on bottom and could be easiliy seperated with plane (not a circle).</p>
+<p>This classificator works very well for such a binary classification like finding out if the student pass or fail.
+It works very good with dataset, that is less than 10 000 examples. But it perform not very well data has a lot of noise (examples with very unusual data).</p>
 
 </div>
 </div>
@@ -12638,7 +12645,7 @@ F1 score for test set: 0.7571.
 
 <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;kernel&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;sigmoid&#39;</span><span class="p">],</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s1">&#39;tol&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">],</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span> <span class="p">}</span>
 
-<span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">()</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 
 <span class="n">f1_scorer</span> <span class="o">=</span> <span class="n">make_scorer</span><span class="p">(</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
 
@@ -12648,6 +12655,8 @@ F1 score for test set: 0.7571.
 
 <span class="c1"># Get the estimator</span>
 <span class="n">clf</span> <span class="o">=</span> <span class="n">grid_obj</span><span class="o">.</span><span class="n">best_estimator_</span>
+
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 <span class="k">print</span> <span class="n">clf</span>
 
 <span class="c1"># Report the final F1 score for training and testing after parameter tuning</span>
@@ -12667,11 +12676,11 @@ F1 score for test set: 0.7571.
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>SVC(C=10, cache_size=200, class_weight=None, coef0=0.0,
   decision_function_shape=None, degree=3, gamma=0.001, kernel=&#39;rbf&#39;,
-  max_iter=-1, probability=False, random_state=None, shrinking=True,
+  max_iter=-1, probability=False, random_state=11, shrinking=True,
   tol=0.001, verbose=False)
-Made predictions in 0.0042 seconds.
+Made predictions in 0.0043 seconds.
 Tuned model has a training F1 score of 0.8301.
-Made predictions in 0.0013 seconds.
+Made predictions in 0.0015 seconds.
 Tuned model has a testing F1 score of 0.7832.
 </pre>
 </div>
