@@ -19,7 +19,7 @@ class LearningAgent(Agent):
         self.learning = learning # Whether the agent is expected to learn
         self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
         self.epsilon = epsilon   # Random exploration factor
-        self.epsilon_c = 1.0
+        self.t = 1.0
         self.alpha = alpha       # Learning factor
 
         ###########
@@ -27,38 +27,7 @@ class LearningAgent(Agent):
         ###########
         # Set any additional class parameters as needed
         
-        self.deadline_states = ['no_rash', 'faster', 'hurry']
         self.cross_traffic_states = ['cross_traffic', 'no_cross_traffic']
-        #self.generate_accident_states()
-        
-    def generate_accident_states(self):
-        # Major accident
-        self.__generate_safety_states(-3.0, 'any', 'forward', 'any', 'red', 'forward')
-        self.__generate_safety_states(-3.0, 'forward', 'any', 'any', 'red', 'forward')
-        self.__generate_safety_states(-3.0, 'any', 'forward', 'any', 'red', 'left')
-        self.__generate_safety_states(-3.0, 'forward', 'any', 'any', 'red', 'left')
-        self.__generate_safety_states(-3.0, 'any', 'any', 'right', 'red', 'left')
-        # Accident
-        self.__generate_safety_states(-2.0, 'any', 'any', 'right', 'green', 'left')
-        self.__generate_safety_states(-2.0, 'any', 'any', 'forward', 'green', 'left')
-        self.__generate_safety_states(-2.0, 'forward', 'any', 'any', 'green', 'right')
-
-    def __generate_safety_states(self, new_value, left, right, incoming, light, action):
-        states = itertools.product(self.valid_actions, self.__all_states(left), self.__all_states(right), self.__all_states(incoming), [light], self.deadline_states)
-        for state in states:
-            self.createQ(state)
-            self.Q[state][action] = new_value
-
-    def __all_states(self, state):
-        if state == 'any':
-            all_states = self.valid_actions
-        else:
-            all_states = [ state ]
-        return all_states
-    
-    def generate_direction_state(self):
-        #any
-        pass
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -78,9 +47,10 @@ class LearningAgent(Agent):
             self.epsilon = 0
             self.alpha = 0
         else:
-            #self.epsilon = 1.0 - self.epsilon_c / (600.0 - self.epsilon_c)
-            self.epsilon = self.epsilon - 0.003
-            self.epsilon_c += 1
+            #self.epsilon = self.epsilon - 0.05
+            self.epsilon = math.exp( -self.alpha * self.t)
+            self.t += 0.5
+            print self.epsilon
 
         return None
 
@@ -97,7 +67,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, self.cross_traffic(inputs['left'], inputs['right']), inputs['oncoming'], inputs['light'], self.position_state(deadline))
+        state = (waypoint, self.cross_traffic(inputs['left'], inputs['right']), inputs['oncoming'], inputs['light'])
 
         return state
 
@@ -105,13 +75,6 @@ class LearningAgent(Agent):
         if left == 'forward' or right == 'forward':
             return 'cross_traffic'
         return 'no_cross_traffic'
-    
-    def position_state(self, deadline):
-        if deadline > 20:
-            return 'no_rash'
-        if deadline < 20 and deadline > 10:
-            return 'faster'
-        return 'hurry'
 
     def get_maxQ(self, state):
         """ The get_max_Q function is called when the agent is asked to find the
@@ -122,11 +85,6 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
         stateQ = self.Q[state]
-
-#        actions = {k: v for (k, v) in stateQ.items() if v == 0.0 }.keys()
-#        if len(actions) > 0:
-#            action = random.choice(list(actions))
-#            return (action, 0.0)
 
         max_v = max(stateQ.values())
         actions = {k: v for (k, v) in stateQ.items() if v == max_v}.keys()
@@ -144,7 +102,7 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
         if state not in self.Q:
-            actionsQ = { x: 30.0 for x in self.valid_actions}
+            actionsQ = { x: 0.0 for x in self.valid_actions}
             self.Q[state] = actionsQ
         return
 
@@ -187,28 +145,9 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         
-        maxQ = None
-        if self.Q[state][action] == 30.0:
-            self.Q[state][action] = reward
-            return
-
-        all_states_generator = self.generate_all_states()
-        for next_state in all_states_generator:
-            self.createQ(next_state)
-            maxAction, local_max = self.get_maxQ(next_state)
-            if maxQ is None or local_max > maxQ:
-                maxQ = local_max
-        new_Q = (1.0 - self.alpha) * self.Q[state][action] + self.alpha * (reward + maxQ)
-        self.Q[state][action] = new_Q
+        self.Q[state][action] = (1.0 - self.alpha) * self.Q[state][action] + self.alpha * (reward)
         return
 
-    def generate_all_states(self):
-        #state = (waypoint, inputs['left'], inputs['right'], inputs['oncoming'], inputs['light'])
-        all_waypoint_states = self.valid_actions[1:]
-        all_oncoming_states = self.valid_actions
-        all_light_states = ['green', 'red']
-#
-        return itertools.product(all_waypoint_states, self.cross_traffic_states, all_oncoming_states, all_light_states, self.deadline_states)
 
 
     def update(self):
@@ -243,7 +182,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, alpha = 0.8, epsilon = 1)
+    agent = env.create_agent(LearningAgent, learning=True, epsilon = 1, alpha = 0.2)
     
     ##############
     # Follow the driving agent
@@ -258,14 +197,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay = 0.01, log_metrics = True)
+    sim = Simulator(env, update_delay = 0.01, log_metrics = True, optimized = True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 10, tolerance = 0.05)
+    sim.run(n_test = 10, tolerance = 0.001)
 
 
 if __name__ == '__main__':
