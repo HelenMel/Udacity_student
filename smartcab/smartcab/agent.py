@@ -19,15 +19,13 @@ class LearningAgent(Agent):
         self.learning = learning # Whether the agent is expected to learn
         self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
         self.epsilon = epsilon   # Random exploration factor
-        self.t = 1.0
         self.alpha = alpha       # Learning factor
 
         ###########
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
-        
-        self.cross_traffic_states = ['cross_traffic', 'no_cross_traffic']
+        self.t = 1.0
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -48,8 +46,8 @@ class LearningAgent(Agent):
             self.alpha = 0
         else:
             #self.epsilon = self.epsilon - 0.05
-            self.epsilon = math.exp( -self.alpha * self.t)
-            self.t += 0.5
+            self.epsilon = math.exp( -self.alpha * self.t / 3.0)
+            self.t += 1
             print self.epsilon
 
         return None
@@ -67,10 +65,12 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, self.cross_traffic(inputs['left'], inputs['right']), inputs['oncoming'], inputs['light'])
+        state = (waypoint, inputs['left'], inputs['oncoming'], inputs['light'])
 
         return state
-
+    
+    # This could be used as another feature to replace input left and right.
+    # Because it seems like only 'forward' on 'no forward' required for left traffic
     def cross_traffic(self, left, right):
         if left == 'forward' or right == 'forward':
             return 'cross_traffic'
@@ -84,12 +84,9 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Calculate the maximum Q-value of all actions for a given state
-        stateQ = self.Q[state]
 
-        max_v = max(stateQ.values())
-        actions = {k: v for (k, v) in stateQ.items() if v == max_v}.keys()
-        action = random.choice(list(actions))
-        return (action, max_v)
+        max_v = max(self.Q[state].values())
+        return max_v
 
 
     def createQ(self, state):
@@ -121,7 +118,9 @@ class LearningAgent(Agent):
             if chooseRandom:
                 action = self.valid_actions[random.randint(0,3)]
             else:
-                maxAction, maxQ = self.get_maxQ(state)
+                maxQ = self.get_maxQ(state)
+                actions = {k: v for (k, v) in self.Q[state].items() if v == maxQ}.keys()
+                maxAction = random.choice(list(actions))
                 action = maxAction
 
         ###########
@@ -144,9 +143,8 @@ class LearningAgent(Agent):
         ###########
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-        
-        self.Q[state][action] = (1.0 - self.alpha) * self.Q[state][action] + self.alpha * (reward)
-        return
+        if self.learning:
+            self.Q[state][action] = (1.0 - self.alpha) * self.Q[state][action] + self.alpha * (reward)
 
 
 
@@ -182,7 +180,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, epsilon = 1, alpha = 0.2)
+    agent = env.create_agent(LearningAgent, learning=True, epsilon = 1, alpha = 0.1)
     
     ##############
     # Follow the driving agent
